@@ -75,8 +75,8 @@ roslaunch loop_fusion mapping_rviz.launch
 ```
 
 During this process, 'show_track' is turn on and you could see two picture like this, the first one is the tracking result while the second one is the visual-lidar keyframe.
-![image](/global_loop/figs/track.png)
-![image](/global_loop/figs/all.png)
+![image](./figs/track.png)
+![image](./figs/all.png)
 When the mapping is over, input **'s'** into the shell and press `enter` to save the map. The map is saved in `pose_graph_save_path` in the [mapping.yaml](/global_loop/config/fastlab_dld_omni/mapping.yaml). It would create the folder if it does not exist, and `pose_graph.txt`, `x_keypoints.txt`, `x_sppdes.bin`,`1_image.png(optional)` could be found in the folder. Besides, you could copy the PCD map in FAST-LIO into the [folder](/global_loop/PCD) and select waypoints in the map, which would be explained later.
 
 ### Re-localization
@@ -86,9 +86,9 @@ Before relocalization, you should compress the generated map and copy it into an
 
 - run re-localization
 After map loaded, the rviz view should be look like this, in which the purple line is the reference trajectory, while the white ball is the keyframe pose.
-![rviz_view](/global_loop/figs/reloc_rviz.png)
+![rviz_view](./figs/reloc_rviz.png)
 If you turn on the option `Mappts`, you could see the pointcloud of keypoints.
-![rviz_map](/global_loop/figs/reloc_map.png)
+![rviz_map](./figs/reloc_map.png)
 Then you could run re-localization based on the loaded map. It should be noted that our method rely on a vio, and the frequency should be higher than 100 Hz as we give this to the drone controller. FAR_VINS is recommended here.
 ```shell
 # launch reloc
@@ -104,9 +104,9 @@ rosbag play xxx.bag
 roslaunch loop_fusion reloc_rviz.launch
 ```
 The relocalization result can be seen as follows, where the rected odom(orange arrow) and path (orange billboard) in LoopGroup demonstrate the result. The PnP result(axes) are used to debug, they are supposed to be close to the ground truth position.
-![reloc_test](/global_loop/figs/reloc_test.png)
+![reloc_test](./figs/reloc_test.png)
 The 2D-3D matching result can be seen as below, you can turn on this option in `debug_image in reloc.yaml` to debug. 
-![matching](/global_loop/figs/matching.png)
+![matching](./figs/matching.png)
 - select waypoints (If you need planner)
 
 If you want to navigate the drone in the mapped scene, you could run the [scipt](/global_loop/scripts/select_point.py) to select waypoints in the lidar map, the result can be seen below. Parameters *ceiling_height* and *pcd_path* need to be change according to your map.
@@ -114,5 +114,5 @@ If you want to navigate the drone in the mapped scene, you could run the [scipt]
 python3 global_loop/scripts/select_point.py
 #Press [shift + left click] to select a point. And [shift + right click] to remove point.
 ```
-![image](/global_loop/figs/select.png)
+![image](./figs/select.png)
 
