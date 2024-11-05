@@ -1,0 +1,11 @@
+<launch>
+    <arg name="config_path" default = "$(find vins)/../config/realsense_d430/realsense_stereo_imu_config.yaml" />
+	  <arg name="vins_path" default = "$(find vins)/../config/../" />
+
+    <node name="vins_estimator" pkg="vins" type="vins_node" output="screen" args = "$(arg config_path)">
+    </node>
+    <node name="rvizvisualisation" pkg="rviz" type="rviz" output="log" args="-d $(find vins)/launch/vins_rviz_config.rviz" />
+    <!-- <node name="loop_fusion_node" pkg="loop_fusion" type="loop_fusion_node" output="screen" args = "$(arg config_path)">
+    </node> -->
+
+</launch>

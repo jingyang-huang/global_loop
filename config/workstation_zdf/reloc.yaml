@@ -1,0 +1,66 @@
+%YAML:1.0
+
+superpoint:
+  max_keypoints: 400
+  keypoint_threshold: 0.01 # 0.004
+  remove_borders: 4 
+  dla_core: 1
+  onnx_file: "/home/heron/SJTU/Codes/VIO/cross_modal_ws/src/global_loop/support_files/model/superpoint_v1_sim_int32.onnx"
+  engine_file: "/home/heron/SJTU/Codes/VIO/cross_modal_ws/src/global_loop/support_files/model/superpoint_v1_sim_int32_laptop.engine"
+
+brief:
+  max_keypoints: 600
+  keypoint_threshold: 5
+  remove_borders: 4
+  pattern_file: "/home/heron/SJTU/Codes/VIO/cross_modal_ws/src/global_loop/support_files/brief_pattern.yml"
+
+point_matcher:
+  image_width: 640
+  image_height: 480
+  onnx_file: "/home/heron/SJTU/Codes/VIO/cross_modal_ws/src/global_loop/support_files/model/superglue_indoor_sim_int32.onnx"
+  engine_file: "/home/heron/SJTU/Codes/VIO/cross_modal_ws/src/global_loop/support_files/model/superglue_indoor_sim_int32_laptop.engine"
+
+
+#common parameters
+#support: 1 imu 1 cam; 1 imu 2 cam: 2 cam; 
+imu: 1         
+num_of_cam: 1
+
+imu_topic: "/mavros/imu/data"
+# image0_topic: "/usb_cam_2/image_raw"
+image0_topic: "/camera/infra1/image_rect_raw"
+
+# output_path: ""
+# output_path: ""
+loop_output_path: "/home/heron/Desktop/loop_output/v1_nx_rs_ref14_loop.txt"
+relo_time_log_path: "/home/heron/Desktop/loop_output/v1_nx_rs_ref14_reloT.txt"
+
+# cam0_calib: "front.yaml"
+cam0_calib: "rs_left.yaml"
+image_width: 640
+image_height: 480
+
+#loop closure parameters
+build_keyframe: 0               # build keyframe for loop closure
+load_previous_pose_graph: 1        # load and reuse previous pose graph; load from 'pose_graph_save_path'
+use_pg_optimize: 1
+use_traj_smooth: 1
+pos_smooth_rate: 0.02
+rot_smooth_rate: 0.02
+skip_dist: 0.5
+pose_graph_save_path: "/home/heron/Desktop/loop_output/keyframes_dld_omni_ref16/" # save and load path
+debug_image: 0                   # save image in pose graph for visualization prupose; you can close this function by setting 0 
+relative_threshold: 0
+max_cnt: 400            # max feature number in feature tracking
+
+#! test on 2024.9.29
+
+body_T_cam0: !!opencv-matrix
+   rows: 4
+   cols: 4
+   dt: d
+   data: [-0.0060931,  -0.01966383 , 0.99978808 , 0.06159839,
+          -0.99996706, -0.00524173 ,-0.00619729 , 0.01064412,
+           0.00536248, -0.99979291, -0.01963124 , 0.05617551,
+           0.        ,  0.        ,  0.         , 1.        ]
+

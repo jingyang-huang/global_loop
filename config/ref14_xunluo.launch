@@ -1,0 +1,155 @@
+<launch>
+    <!-- size of map, change the size inflate x, y, z according to your application -->
+    <arg name="drone_id" default="0"/>
+    <!-- topic of your odometry such as VIO or LIO -->
+    <arg name="odom_topic" value="/odom_fusion/odom"/>
+    <!-- <arg name="odom_topic" value="/far_vins_node/rected_imu_propagation"/> -->
+
+    <!-- main algorithm params -->
+    <include file="$(find ego_planner)/launch/include/advanced_param_exp.xml">
+        <arg name="drone_id" value="$(arg drone_id)"/>
+        <arg name="odometry_topic" value="$(arg odom_topic)"/>
+        <!-- camera pose: transform of camera frame in the world frame -->
+        <!-- depth topic: depth image, 640x480 by default -->
+        <!-- don't set cloud_topic if you already set these ones! -->
+        <arg name="camera_pose_topic" value="pcl_render_node/camera_pose"/>
+        <!-- <arg name="depth_topic" value="pcl_render_node/depth"/> -->
+        <arg name="depth_topic" value="/camera/depth/image_rect_raw"/>
+        <!-- topic of point cloud measurement, such as from LIDAR  -->
+        <!-- don't set camera pose and depth, if you already set this one! -->
+        <arg name="cloud_topic" value="/nouse3"/>
+        <!-- intrinsic params of the depth camera -->
+        <arg name="cx" value="322.218017578125"/>
+        <arg name="cy" value="235.72129821777344"/>
+        <arg name="fx" value="384.9954833984375"/>
+        <arg name="fy" value="384.9954833984375"/>
+
+        <!-- maximum velocity, acceleration and jerk the drone will reach -->
+        <arg name="max_vel" value="3.0" />
+        <arg name="max_acc" value="6.0" />
+        <arg name="max_jer" value="10.0" />
+        <arg name="max_sna" value="18.0" />
+        <!--always set to 1.5 times grater than sensing horizen !!!-->
+        <!-- <arg name="planning_horizon" value="12.0" /> -->
+        <arg name="use_multitopology_trajs" value="false" />
+        <!-- 1: use 2D Nav Goal to select goal  -->
+        <!-- 2: use global waypoints below  -->
+        <arg name="flight_type" value="3" />
+        <!-- global waypoints -->
+        <!-- It generates a piecewise min-snap traj passing all waypoints -->
+        <arg name="point_num" value="11" />
+        <!-- 0 -->
+        <arg name="point0_x" value="12.7" />
+        <arg name="point0_y" value="0.3" />
+        <arg name="point0_z" value="0.7" />
+        <!-- 1 -->
+        <arg name="point1_x" value="33.5" />
+        <arg name="point1_y" value="2.6" />
+        <arg name="point1_z" value="0.7" />
+        <arg name="point2_x" value="33.0" />
+        <arg name="point2_y" value="18.2" />
+        <arg name="point2_z" value="0.7" />
+        <!-- 2 -->
+        <arg name="point3_x" value="33.5" />
+        <arg name="point3_y" value="2.6" />
+        <arg name="point3_z" value="0.7" />
+        <arg name="point4_x" value="49.3" />
+        <arg name="point4_y" value="2.8" />
+        <arg name="point4_z" value="0.7" />
+        <arg name="point5_x" value="49.0" />
+        <arg name="point5_y" value="6.5" />
+        <arg name="point5_z" value="0.7" />    
+        <arg name="point6_x" value="49.3" />
+        <arg name="point6_y" value="2.8" />
+        <arg name="point6_z" value="0.7" />
+        <!-- 3 -->
+        <arg name="point7_x" value="33.5" />
+        <arg name="point7_y" value="2.6" />
+        <arg name="point7_z" value="0.7" />
+        <arg name="point8_x" value="33.0" />
+        <arg name="point8_y" value="18.2" />
+        <arg name="point8_z" value="0.7" />
+        <arg name="point9_x" value="33.5" />
+        <arg name="point9_y" value="2.6" />
+        <arg name="point9_z" value="0.7" />
+        <!-- 4 -->
+        <arg name="point10_x" value="12.7" />
+        <arg name="point10_y" value="0.3" />
+        <arg name="point10_z" value="0.7" />
+        <!-- other -->
+        <arg name="point11_x" value="32.2" />
+        <arg name="point11_y" value="-19.0" />
+        <arg name="point11_z" value="0.7" />
+        <arg name="point12_x" value="26.3" />
+        <arg name="point12_y" value="-18.4" />
+        <arg name="point12_z" value="0.7" />  
+        <arg name="point13_x" value="31.9" />
+        <arg name="point13_y" value="-18.0" />
+        <arg name="point13_z" value="0.7" />
+        <arg name="point14_x" value="37.0" />
+        <arg name="point14_y" value="-18.0" />
+        <arg name="point14_z" value="0.7" />
+        <arg name="point15_x" value="37.0" />
+        <arg name="point15_y" value="-18.0" />
+        <arg name="point15_z" value="0.7" />
+        <arg name="point16_x" value="37.0" />
+        <arg name="point16_y" value="-18.0" />
+        <arg name="point16_z" value="0.7" />
+        <!-- 3 -->
+        <arg name="point17_x" value="38.5" />
+        <arg name="point17_y" value="-9.2" />
+        <arg name="point17_z" value="0.7" />
+        <arg name="point18_x" value="37.3" />
+        <arg name="point18_y" value="-1.37" />
+        <arg name="point18_z" value="0.7" />
+        <arg name="point19_x" value="0.0" />
+        <arg name="point19_y" value="0.0" />
+        <arg name="point19_z" value="0.7" />
+
+        <!-- other -->
+        <arg name="point20_x" value="110" />
+        <arg name="point20_y" value="-0.2" />
+        <arg name="point20_z" value="0.7" />
+        <arg name="point21_x" value="110" />
+        <arg name="point21_y" value="-0.2" />
+        <arg name="point21_z" value="0.7" />
+        <arg name="point22_x" value="108.0" />
+        <arg name="point22_y" value="8.2" />
+        <arg name="point22_z" value="0.7" />
+        <arg name="point23_x" value="102.0" />
+        <arg name="point23_y" value="8.2" />
+        <arg name="point23_z" value="0.7" />
+
+        <!-- other -->
+        <arg name="point24_x" value="96.0" />
+        <arg name="point24_y" value="-24.0" />
+        <arg name="point24_z" value="0.7" />
+        <arg name="point25_x" value="88.0" />
+        <arg name="point25_y" value="-38.0" />
+        <arg name="point25_z" value="0.7" />
+        <arg name="point26_x" value="85.0" />
+        <arg name="point26_y" value="-50.0" />
+        <arg name="point26_z" value="0.7" />
+        <arg name="point27_x" value="50.0" />
+        <arg name="point27_y" value="-50.0" />
+        <arg name="point27_z" value="0.7" />
+        <arg name="point28_x" value="20.0" />
+        <arg name="point28_y" value="-53.0" />
+        <arg name="point28_z" value="0.7" />
+        <arg name="point29_x" value="0.0" />
+        <arg name="point29_y" value="0.0" />
+        <arg name="point29_z" value="0.7" />
+    </include>
+    
+    <!-- <include file="$(find manual_take_over)/launch/take_over_drone.launch">
+        <arg name="drone_id" value="$(arg drone_id)"/>
+        <arg name="cmd_topic" value="/position_cmd"/>
+    </include> -->
+
+    <!-- <node pkg="exploration_manager" type="quadrotor_move_interface_node" name="quadrotor_move_interface_node" output="screen" >
+        <param name="drone_id" type="int" value="$(arg drone_id)" />
+        <remap from="~odometry" to="$(arg odom_topic)"/>
+    </node> -->
+
+</launch>
+    

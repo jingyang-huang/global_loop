@@ -1,0 +1,68 @@
+%YAML:1.0
+
+superpoint:
+  max_keypoints: 400
+  keypoint_threshold: 0.01 # 0.004
+  remove_borders: 4 
+  dla_core: 1
+  onnx_file: "/home/nv/SJTU_cm_ws/src/global_loop/support_files/model/superpoint_v1_sim_int32.onnx"
+  engine_file: "/home/nv/SJTU_cm_ws/src/global_loop/support_files/model/superpoint_v1_sim_int32_nx.engine"
+
+point_matcher:
+  image_width: 640
+  image_height: 480
+  onnx_file: "/home/nv/SJTU_cm_ws/src/global_loop/support_files/model/superglue_indoor_sim_int32.onnx"
+  engine_file: "/home/nv/SJTU_cm_ws/src/global_loop/support_files/model/superglue_indoor_sim_int32_nx.engine"
+
+
+#common parameters
+#support: 1 imu 1 cam; 1 imu 2 cam: 2 cam; 
+imu: 1         
+num_of_cam: 1
+
+imu_topic: "/mavros/imu/data"
+# image0_topic: "/usb_cam_2/image_raw"
+image0_topic: "/camera/infra1/image_rect_raw"
+
+# output_path: ""
+# output_path: ""
+loop_output_path: "/home/nv/Desktop/loop_output/v1_nx_rs_ref14_loop.txt"
+relo_time_log_path: "/home/nv/Desktop/loop_output/v1_nx_rs_ref14_reloT.txt"
+
+# cam0_calib: "front.yaml"
+cam0_calib: "rs_left.yaml"
+image_width: 640
+image_height: 480
+
+#loop closure parameters
+build_keyframe: 0               # build keyframe for loop closure
+load_previous_pose_graph: 1        # load and reuse previous pose graph; load from 'pose_graph_save_path'
+use_pg_optimize: 1
+use_traj_smooth: 1
+skip_dist: 0.5
+pose_graph_save_path: "/home/nv/Desktop/loop_output/keyframes_dld_omni_ref14/" # save and load path
+debug_image: 1                   # save image in pose graph for visualization prupose; you can close this function by setting 0 
+relative_threshold: 0
+max_cnt: 400            # max feature number in feature tracking
+
+#! test on 2024.9.29
+
+body_T_cam0: !!opencv-matrix
+   rows: 4
+   cols: 4
+   dt: d
+   data: [-0.08040125 ,-0.04004221 , 0.99595796 , 0.03384598,
+          -0.99668577 , 0.01563417 ,-0.07983143  ,0.04072623,
+          -0.01237435 ,-0.99907567 ,-0.04116651  ,0.03466781,
+           0.         , 0.         , 0.          ,1.        ]
+
+
+body_T_lidar: !!opencv-matrix
+   rows: 4
+   cols: 4
+   dt: d
+   data: [ 0,  0.9659258,  0.2588190,    -0.010,
+            -1,          0,          0,         0, 
+            0, -0.2588190,  0.9659258,     0.060,
+            0,          0,          0,         1 ]
+

@@ -1,0 +1,17 @@
+<launch>
+	<!-- <node name="vins_estimator" pkg="vins"  type="vins_node" output="screen" args="$(find vins)/../config/workstation_dld_rs/realsense_stereo_imu_config.yaml"/> -->
+	<arg name="config_path" default="$(find loop_fusion)/../config/workstation_dld_rs/reloc.yaml" />
+
+    <node name="ros_reloc_node" pkg="loop_fusion" type="ros_reloc_node" output="screen" args="$(arg config_path)" required="true">
+<!--    <node name="ov_loop_fusion_node" pkg="ov_loop_fusion" type="ov_loop_fusion_node" output="screen" args="$(arg config_path)" required="true" launch-prefix="gdb -ex run &#45;&#45;args">-->
+        <!-- INPUT: keyframe poses / marginalized poses /mapping/cloud_deskewed -->
+        <remap from="/vins_estimator/odometry"   to="/vins_estimator/imu_propagate"/>  
+        <remap from="/vins_estimator/imu_propagate"    to="/vins_estimator/imu_propagate"/>
+        <!-- <remap from="/ros_reloc_node/odometry_rect"   to="/ros_reloc_node/odometry_rect_ws"/>   -->
+        <!-- <remap from="/vins_estimator/keyframe_point"   to="/mapping/cloud_registered"/>   -->
+        <!-- <remap from="/vins_estimator/keyframe_pose"    to="/mapping/Odometry"/> -->
+        <!-- INPUT: current system pose and points -->
+        <!-- <remap from="/vins_estimator/odometry"             to="/mapping/Odometry"/> -->
+    </node><!-- <node pkg="rosbag" type="play" name="player" output="screen" args=" /home/ubuntu/Desktop/data/huzhou/vision_0.bag -s 70 -r 2"/> -->
+	<!-- <node name="rvizvisualisation" pkg="rviz" type="rviz" output="log" args="-d $(find loop_fusion)/launch/reloc.rviz" /> -->
+</launch> 

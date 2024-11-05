@@ -1,0 +1,12 @@
+<launch>
+	<arg name="config_path" default="$(find loop_fusion)/../config/fastlab_dld_omni/mapping.yaml" />
+
+    <node name="ros_mapping_node" pkg="loop_fusion" type="ros_mapping_node" output="screen" args="$(arg config_path)" required="true">
+<!--    <node name="ov_loop_fusion_node" pkg="ov_loop_fusion" type="ov_loop_fusion_node" output="screen" args="$(arg config_path)" required="true" launch-prefix="gdb -ex run &#45;&#45;args">-->
+        <!-- INPUT: keyframe poses / marginalized poses /mapping/cloud_deskewed -->
+        <!-- <remap from="/vins_estimator/keyframe_point"   to="/mapping/cloud_registered"/>   -->
+        <!--<remap from="/vins_estimator/odometry"         to="invalid1"/>-->
+        <!--<remap from="/vins_estimator/margin_cloud"     to="invalid2"/>-->
+    </node>
+	<!-- <node pkg="rosbag" type="play" name="player" output="screen" args=" /home/ubuntu/Desktop/data/huzhou/vision_0.bag -s 70 -r 2"/> -->
+</launch> 

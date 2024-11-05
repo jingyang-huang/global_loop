@@ -1,0 +1,9 @@
+<launch>
+    <arg name="config_path" default = "$(find vins)/../config/euroc/euroc_stereo_front_config.yaml" />
+	  <arg name="vins_path" default = "$(find vins)/../config/../" />
+    
+    <node name="vins_node" pkg="vins" type="vins_node" output="screen" args = "$(arg config_path)">
+       <param name="config_file" type="string" value="$(arg config_path)" />
+    </node>
+
+</launch>

@@ -1,0 +1,384 @@
+\documentclass[conference]{./support/ieeeconf}
+\usepackage{times}
+\usepackage{amsmath}
+%\usepackage{balance}
+\usepackage[pdftex]{graphicx}
+\usepackage{caption}
+\usepackage{subfiles} 
+\usepackage{subfigure}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb,amsopn,amstext,amsfonts}
+\usepackage{cancel}
+\usepackage[space]{cite}
+\usepackage{pdfsync}
+\usepackage{balance}
+\usepackage{color}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{url}
+\usepackage{booktabs}
+\usepackage{threeparttable}
+\usepackage[linkcolor=black,citecolor=black,urlcolor=black,colorlinks=true]{hyperref}
+\usepackage{multirow}
+%\usepackage{epstopdf}
+\usepackage[outdir=./epstopdf/]{epstopdf}
+%\usepackage[outdir=./]{epstopdf}
+\bibliographystyle{IEEEtran}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{verbatim}
+\usepackage{makecell}
+\usepackage{comment}
+%\usepackage{subcaption}
+\IEEEoverridecommandlockouts
+
+\newcommand{\todo}[1]{\textcolor{red}{#1}}
+\newcommand{\transpose}{\mbox{${}^{\text{T}}$}}
+\newcommand{\eye}[1][]{\ensuremath{\mathbb{I}_{#1}}}
+\newcommand\inv[1]{#1\raisebox{1.15ex}{$\scriptscriptstyle-\!1$}}
+\DeclareMathOperator*{\argmaxA}{arg\,max} % Jan Hlavacek
+\DeclareMathOperator*{\argminA}{arg\,min}
+
+\graphicspath{{./figure/}}
+
+\DeclareGraphicsExtensions{.pdf,.png,.jpg,.eps,.PNG}
+\title{\LARGE \bf  Building Hybrid Omnidirectional Visual-Lidar Maps for \\ Visual-Only Localization}
+\author{Jingyang Huang, Hao Wei, Changze Li, Tong Qin, Fei Gao, and Ming Yang
+\thanks{Changze Li, Tong Qin, and Ming Yang are with the Global Institute of Future Technology, Shanghai Jiao Tong University, Shanghai, China.
+		{\tt\small  \{Changzeli, qintong, mingyang\}@sjtu.edu.cn}. 
+}
+\thanks{ Jingyang Huang, Hao Wei, and Fei Gao are with Zhejiang University, Hangzhou, China.{\tt\small  \{xxx, fgaoaa\}@zju.edu.cn}}
+%  \thanks{$^*$is the corresponding author.}
+ }
+
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+\pagestyle{empty}
+
+\begin{abstract}
+Recently, Neural Radiance Fields (NeRF) achieved impressive results in novel view synthesis.
+% Embedded devices have limited memory and GPU resources. Saving data as keyframes significantly compresses the information while avoiding the immense computational load and time required for point cloud projections. Additionally, keyframes naturally record observations during the mapping process, ensuring that all information is accurately aligned within the mapping coordinate system.
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+In this paper, we present a crowd-sourced framework, which utilizes substantial data captured by production vehicles to reconstruct the scene with the NeRF model.
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+We highlight that we presents a comprehensive framework that integrates multiple modules, including data selection, sparse 3D reconstruction, sequence appearance embedding, depth supervision of ground surface, and occlusion completion. 
+Extensive quantitative and qualitative experiments were conducted to validate the performance of our system.
+The source code will be published soon.
+\end{abstract}
+
+\begin{figure}
+	\centering
+    \includegraphics[width=.9\linewidth]{figures/bridge.png} \label{fig:bridge}
+	\caption{The basic idea of our re-localization system is using keyframes to connect 2D keypoints and 3D cloud points for pose estimation.}
+\end {figure}
+ 
+
+\section{Introduction}
+{V}{isual} localization is the problem of estimating the 6 Degree-of-Freedom (DoF) camera pose from which a given image was taken relative to a reference scene representation, also known as a type of map-based localization. It is a fundamental aspect of numerous applications, ranging from robotics and autonomous driving vehicles to Virtual and Augmented Reality devices.
+
+Typically, visual localization requires consecutive camera frames or independent images to build a scene-specific 3D map using Struct-from-Motion (SfM) or Simultaneous Localization and Mapping (SLAM) methods. The map is then used to estimate the camera pose in real-time. However, pure visual methods are challenging due to the large appearance variations caused by viewpoint changes and illumination, and the visual map itself may not be accurate enough to obtain a high accuracy compared to natively collected 3D points. Moreover, point cloud maps generated by purely visual methods are extremely sparse, making them inadequate for capturing detailed information about the entire environment. To improve visual localization performance, researchers have proposed using cross-modal information, such as lidar point clouds\cite{caselitz2016monocular}, which is more accurate and robust for localization. 
+
+Cross-modal visual relocalization methods have garnered significant attention and research \cite{zhang2023cross}. The LIVO system is proposed to construct a consistent association between visual and LiDAR maps \cite{lin2022r3live,zheng2022fast}. Netherless, some approaches require offline construction of visual-lidar maps\cite{bai2024colmap}, while others, particularly learning-based methods, demand substantial computational\cite{puligilla2024liploc}. These limitations hinder the widespread adoption and application of cross-modal relocalization, especially on platforms such as low-cost Unmanned Aerial Vehicle (UAV) and mobile robots.
+
+Hence, in this paper, during the mapping stage, we make full use of lidar data and quad-view pinhole camera inputs to construct a precise omnidirectional visual keyframe map based on lidar inertial odometry poses and visual feature points in real-time. During the relocalization phase, candidate keyframes are first retrieved using a Bag-of-Words (BoW) approach\cite{GalvezTRO12DBOW}. Following this, 2D-2D data associations are established using SuperGlue\cite{sarlin2020superglue}. If the number of inliers is sufficient, the current frame’s accurate pose is estimated using PnP-RANSAC, which is then fed into a sliding-window Pose Graph Optimization. Moreover, both mapping and relocalization can be performed in real-time on embedded devices.
+
+The contributions of this paper are summarized as follows:
+\begin{itemize}
+	\item  We proposed a visual relocalization framework that leverages a hybrid visual-lidar map, which can achieve accurate and robust relocalization in challenged environments. In the hybrid maps, image features are associated with accurate depth information from lidar scans. 
+
+	\item We proposed the rotation-free re-localization mechanism by employing four pinhole cameras which can simultaneously generate multi-directional keyframes. Therefore, the relocalization is not constrained by viewpoints.
+
+	\item We have conducted extensive experiments with real UAVs, demonstrating that our algorithm can run in real-time on the computation-limited onboard computer. Using cameras, we achieve precise localization that is as accurate as LiDAR. The recall and precision results show the robustness and accuracy of our algorithm.
+
+\end{itemize}   
+
+\section{literature review}
+
+\subsection{Cross Modal Localization}
+UAV relocalization systems must balance localization accuracy and sensor costs.
+LiDAR can provide geometrically precise scene maps, and these maps are robust to illumination changes, making them widely used in localization systems.
+However, LiDAR is expensive, making it challenging to deploy on low-cost UAV platforms.
+On the other hand, visual relocalization lags behind lidar relocalization in terms of localization accuracy and robustness.
+Cross-modal localization can effectively balance these two issues, gradually evolving into a new research hotspot.
+Cross-modal localization first uses LiDAR for mapping and then employs a visual camera for relocalization within the established LiDAR map\cite{caselitz2016monocular,zhang2023cross}.
+This approach ensures localization accuracy while reducing sensor requirements during the relocalization stage.
+
+In terms of implementation, cross-modal localization can be categorized into projection-based relocalization \cite{chen2022i2d,pan2024qtcross} and 3D structure-based relocalization \cite{huang2019metric,kimstereo}.
+
+Projection-based relocalization methods project the 3D lidar map onto a 2D plane, generating depth projection images or intensity projection images. During relocalization, the current visual image is matched with the precomputed projection images to obtain the camera pose within the map.
+This approach has the advantage of high computational efficiency but suffers from the loss of 3D structural information during the projection process, affecting relocalization accuracy.
+
+3D structure-based relocalization methods directly utilize the geometric structure information in the 3D LiDAR map.
+By matching the current visual image with the 3D feature points and lines in the map, the camera pose can be solved.
+This method preserves the complete 3D structural information, leading to higher relocalization accuracy but lower computational efficiency.
+
+In terms of methodology, cross-modal localization can be classified into rule-based cross-modal relocalization \cite{he2024accurate} and learning-based relocalization \cite{wang2021p2net,cattaneo2020global}.
+Rule-based methods typically employ handcrafted feature descriptors and matching strategies to match visual images with lidar maps.
+These methods have the advantage of strong interpretability but suffer from limited robustness and generalization ability.
+Learning-based methods leverage deep learning techniques to automatically learn feature representations and matching strategies from data.
+
+
+
+\subsection{Visual Re-Localization} 
+In visual relocalization, the visual feature map is generally constructed through SLAM or SfM, consisting of visual landmarks with high-dimensional descriptors. During the relocalization stage, the current query image is first retrieved from the map database, and the retrieved reference images are matched with the current query image. The resulting 2D-2D matches between the two sets of feature points are then associated with the 3D visual landmarks in the map, transforming them into 2D-3D matches between feature points and visual landmarks. By solving this typical Perspective-n-Point (PnP) problem, the camera pose in the map coordinate system can be estimated.\cite{carmichael2024spot}
+
+Currently, this visual feature point map-based relocalization method can be implemented in two ways: local feature extraction followed by matching, and joint local feature extraction and matching. The former first extracts local features from the query image and then retrieves and matches them in the map database, while the latter jointly extracts features and performs matching on the query image and images in the map.
+
+However, visual feature point maps require storing a large amount of high-dimensional descriptors, consuming significant storage space. Additionally, the sensitivity of camera imaging to illumination changes can affect map construction and localization accuracy. In scenes with varying illumination conditions, the performance of this visual feature point map-based relocalization method is limited. To improve robustness, some works have attempted to incorporate deep learning techniques or directly perform image retrieval and localization based on global descriptors.
+\cite{arandjelovic2016netvlad,hausler2021patch,sarlin2018leveraging}
+
+%hierarchical localization
+
+\begin{figure*}[t]
+	\centering
+	\includegraphics[width=1.0\textwidth]{figures/pipeline.png}
+	\caption{
+		The structure of the proposed crowd-sourcing system. The strategy of crowd-sourced data collection is elaborated in Sec. \ref{sec:data_collection}, which collects massive data and filters them with a balanced spatial and temporal distribution.
+			Then, the data pre-process model, Sec. \ref{sec:data_propocess}, segments images semantically, extracts the depth of the ground surface, and refines the camera pose by SfM. 
+			The NeRF training procedure is illustrated in Sec. \ref{sec:trainning}, which trains the NeRF model with three improvements, which are sequence appearance embedding, surface depth supervision, and occlusion completion.
+		}
+	\label{fig:framework}
+\end{figure*}
+
+\section{Methodology}
+An overview of our method is shown in Fig. \ref{fig:framework}. 
+Our algorithm operates in two sequential stages. During the mapping stage, the visual-lidar mapping module associates data from the LiDAR sensor and four omni-directional USB pinhole cameras to generate a hybrid visual-lidar Map. In the localization stage, the visual-only relocalization module first loads keyframes offline from the map. When the system is running online, the loop closure module uses DBoW to detect the most similar keyframe in the map and matches it with the current image. Since the keypoints in the Keyframes Database contain the 3D positions under the map coordinate system, we establish a 2D-3D correspondence between the image and point cloud by matching the 2D keypoints between image and keyframes. We then solve the initial pose estimation using PnP with RANSAC. However, the pose obtained directly from PnP has a certain deviation. We further optimize the pose estimation result through a Pose Graph, and the final global odometry is fed to the planner to execute navigation tasks.
+In the subsequent sections, we will delve into the specifics of each module.
+\subsection{Visual-Lidar Mapping}
+In the Visual-Lidar Mapping stage, proposed method would combine data from LiDAR and cameras. We propose a method that uses keyframe $K^M_i$ to record the pixel-wise association between point clouds and image pixels. To prevent keyframes from storing too much redundant information in nearby locations, a new keyframe is only generated when the UAV has traveled a predetermined distance. In our system, we generate 4 keyframe at four direction simutaneously, each of their pose can be calculated using extrinsic between cameras.All keyframes are then save together to construct hybrid visual-lidar map.
+
+\subsubsection{Submap Projection}
+We select FAST-LIO2 \cite{xu2022fast} among various LiDAR-Inertial Odometry (LIO) methods due to its low computational cost and ability to run in real-time on edge computing platforms. To collect the point cloud data, we use a Livox Mid-360 LiDAR sensor, which employs a non-repetitive scanning scheme. Therefore, it is necessary to accumulate raw point clouds over time to generate a denser submap.
+
+First, we transform the submap from the global coordinate system of LIO to the local coordinate system. Next, we transform the local submap $\mathcal{P}^S = \left\{ p^s_n \right\}$ into the camera coordinate system using the extrinsic calibration matrix $^CT_L$. Finally, we project the submap points onto the image plane to obtain the 2D pixel coordinates $\mathcal{X}^S = \left\{ x^s_n \right\} $, using the calibrated camera intrinsic matrix $K$ as follows.
+\begin{equation} \mathcal{X}^S = K \cdot ( ^CT_L \cdot \mathcal{P}^S ) \end{equation}
+
+
+\subsubsection{Pixel-wise Point Association}
+
+After projecting the submap onto the camera's pixel plane, we can associate LiDAR submap points $\mathcal{P}^S$ with image feature points $\mathcal{X}^I =  \left\{ x^I_n \right\}$ at the pixel level. We use SuperPoint\cite{detone2018superpoint} to detect feature points and extract descriptors. Due to inevitable calibration errors, we consider projected points $\mathcal{X}^S$ within a 2-pixel radius around a feature point $x^I_n$ to be associable. However, it is not appropriate to roughly weight the depths of all neighboring projected points for a given feature point, as feature extractors tend to focus on corner points, which can lead to significant depth variation among nearby projected points. To address this, we apply an outlier rejection method, retaining only projected points with similar depths. We then perform weighted averaging of the depth values and assign the resulting depth to the feature point.
+
+\begin{figure}[h]
+	\centering
+	\subfigure[The example of submap projection.]{
+		\includegraphics[width=1.0\linewidth]{figures/pro.png} \label{fig:segmentation}
+	}
+	\subfigure[The illustration of Pixel-wise Association.]{
+		\includegraphics[width=1.0\linewidth]{figures/ass.png} 
+		\label{fig:imp_projection}
+ 	}
+	\caption{In (a), the image is segmented into multiple semantic groups, such as lane, crosswalk, vehicle, tree, road, stop lines, etc. (b) is the diagram of the inverse projection process. The pixel is inversely projected to the ground ($z_v = 0$), so that the depth $d$ of the ray can be obtained.} 
+	\label{fig:segmentation_projection}
+\end{figure}
+Following these two procedures, depthed keypoints with descriptors are obtained.  As we employ DBoW for image retrieval in our localization procedure, more feature points contribute to a more unique representation of each picture,  which is advantageous for image retrieval. For this reason, we preserve both depthed and undepthed keypoints in keyframe.
+
+In addition to image keypoints $\mathcal{X}_i$ , lidar points  $\mathcal{P}_i$  and descriptors $\mathcal{D}_i$ , we also add  a 6-DoF pose $\mathcal{T}_i \in SE(3)$ to each keyframe $K^M_i$ . Thus, one keyframe ${K}_i$ is consisted of four components: $\mathcal{X}_i$ , $\mathcal{P}_i$ , $\mathcal{D}_i$ and $\mathcal{T}_i$. Specifically, $\mathcal{X} = \left\{ x_n \right\}$ represents the 2D pixel coordinates of image keypoint, $\mathcal{P} = \left\{ p_n \right\}$ represents the 3D point coordinates of lidar point and $\mathcal{D} = \left\{ d_n \right\}$ represents the set of descriptors corresponding to the keypoints. The 6-DoF pose $\mathcal{T}_i$ is later used in image retrieval and pose estimation. By storing each keyframe $K^M_i$ generated during the mapping process, we are able to construct a hybrid visual-lidar map $\mathcal{K^M} = \left\{ K^M_i \right\} $, which is subsequently used in the visual re-localization stage.
+
+\subsection{Visual Re-localization}
+Similar to conventional visual relocalization, we utilize the visual information observed by the camera to recover the current  pose of the system in the world coordinate frame. Our process is similar to the deep learning-based framework HLoc (Hierarchical Localization) [1] and consists of the following key steps: feature detection and extraction, image retrieval, feature matching, pose estimation, and pose optimization.
+
+\subsubsection{Feature Detection and Mathching}
+In our task, a USB pinhole camera is used for mapping, while a RealSense stereo camera is employed for localization. To address this, we adopted the widely used SuperPoint detector for feature detection and descriptor extraction, and utilized the SuperGlue matcher for subsequent descriptor matching. The query keyframe $K^Q_i$  is generated in this way. Deep learning-based algorithms such as SuperPoint and SuperGlue have demonstrated outstanding performance in recent years, particularly when matching images captured by different devices under varying lighting conditions, making them well-suited for our scenario.
+
+\subsubsection{Image Retrieval}
+
+We use the classic DBoW [29] to construct global features for both the query and reference images. However, due to the scene's similarity and the presence of many repeated patterns, a significant number of false positives may be retrieved. To mitigate this, we impose restrictions on the DBoW image retrieval process to ensure the search is confined to the appropriate range. Given that the depth values of feature points are obtained from LiDAR, we consider the corrected poses to be highly accurate. Therefore, we introduce an additional image retrieval strategy as shown in Figure \ref{retrieval}: if no loop closure has occurred, the search is performed across all images; however, once a loop closure is detected, the search is restricted to keyframes with nearby positions.
+
+And it should be noted that image retrieval is not orientation-restricted, as we construct the map with keyframes covering almost all directions. This ensures that loop closure can occur in any orientation, making our system robust to varying camera poses.
+
+\subsubsection{Pose Estimation}
+
+After DBoW retrieves the candidate keyframes $\mathcal{K^C} = \left\{ K^C_j \right\}$, the system uses the SuperGlue matcher to match the keypoints and descriptors in the query keyframe $K^Q_i$ with those in the candidate keyframes $\mathcal{K^C}$. The 2D-2D correspondences between $\mathcal{X}^Q_i$ and $\mathcal{X}^C_j$ are then transformed into 2D-3D matches between $\mathcal{X}^Q_i$ and $\mathcal{P}^C_j$ for pose estimation. When a sufficient number of 2D-3D matches are established, the system employs PnP with RANSAC to estimate the pose.
+
+The PnP problem aims to minimize the reprojection error of between 3D points $\mathcal{P}^R$ and their 2D pixels $\mathcal{X}^Q_i$ as follows, while RANSAC is used to reject outliers and enhance the robustness of the PnP solution. Among all candidate keyframes $\mathcal{K^C}$, the result from the keyframe $K^C_R$ with the maximum number of inliers $\mathcal{I}_m$ is preserved. 
+
+\begin{equation} 
+\begin{aligned} 
+&\mathcal{T^Q_C}^* = \argminA_{\mathcal{T^Q_C}} \sum_{n \in \mathcal{I}_m} \rho \left( ||\pi(\mathcal{T^Q_C} \mathcal{P}^{R}_n) - \mathcal{X}^Q_n||^2 \right) \\
+&\mathcal{I}j = \left{ n , | , ||\pi(\mathcal{T^Q_C} \mathcal{P}^{R}n) - \mathcal{X}^Q_n||^2 < \epsilon{th} \right} \\ &K^C_R = \argmaxA_{K^C_j \in \mathcal{K^C}} |\mathcal{I}_j| 
+\end{aligned} 
+\end{equation}
+
+% \begin{equation}
+% \begin{aligned}
+% 	&\mathcal{T^Q_C}^* = \argminA_{\mathcal{T^Q_C}} \sum_{n=1}^{N} \rho (||\pi(\mathcal{T^Q_C}p^{C}_n) - x^Q_n||^2)
+%  \\
+%  &K^R = \argmaxA_{K^C_j \in \mathcal{K^C}} |\mathcal{I}_j|
+%  \end{aligned}
+% \end{equation}
+
+Throughout this process, keyframes serve as a bridge, linking the 2D keypoints in the query image to the 3D point cloud in the map. In this way, we obtain the estimation of camera pose within the pre-built map.
+
+\begin{figure}[h]
+	\centering
+	\subfigure[The example of submap projection.]{
+		\includegraphics[width=.8\linewidth]{figures/retrieval.png} \label{fig:retrieval}
+	}
+	\subfigure[The illustration of pgo.]{
+		\includegraphics[width=.8\linewidth]{figures/pgo} 
+		\label{fig:imp_projection}
+ 	}
+	\caption{In (a), the image is segmented into multiple semantic groups, such as lane, crosswalk, vehicle, tree, road, stop lines, etc. (b) is the diagram of the inverse projection process. The pixel is inversely projected to the ground ($z_v = 0$), so that the depth $d$ of the ray can be obtained.} 
+	\label{fig:segmentation_projection}
+\end{figure}
+
+\subsubsection{Pose Graph Optimization}
+
+In UAV navigation tasks, high-frequency odometry is required as input for the controller. It`s normal to think that using the pose from PnP to calculate the current cumulative error and correct the VIO odometry based on this error. However, directly using the PnP result to compute the cumulative drift error can cause significant jumps in the error, which may lead to controller failure. To address this, we incorporate pose graph optimization (PGO) based on the result of PnP estimation. 
+Everytime a new query keyframe $K^Q_i$ come, it is push into a sliding keyframe window  $\mathcal{K}^Q$. We would next get their connected loop-closure keyframes $\mathcal{K}^R$ if existing. All keyframe in $\mathcal{K}^Q$ and $\mathcal{K}^R$ are added into the pose graph and serve as a vertex, and it connects with other vertexes throughloop closure edge or sequential edge. The loop closure edges connects pnp pose vertex of $K^Q_i$ and reference keyframe pose vertex $K^R_j$, while sequential edges  connect two sequential VIO pose vertex $K^Q_i$ and $K^Q_{j}$. We construct a 4-DOF PGO and  define the residual of the edge between vertex i and j minimally as :
+\begin{equation}
+\begin{aligned}
+\mathbf{r}_{i, j}\left(\mathbf{t}_i^w, \psi_i, \mathbf{t}_j^w, \psi_j\right)&=\left[\begin{array}{c}
+\mathbf{R}\left(\hat{\phi}_i, \hat{\theta}_i, \psi_i\right)^{-1}\left(\mathbf{t}_j^w-\mathbf{t}_i^w\right)-\hat{\mathbf{t}}_{i j}^i \\
+\psi_j-\psi_i-\hat{\psi}_{i j}
+\end{array}\right] \\
+\end{aligned}
+\end{equation}
+
+\begin{equation}
+\begin{aligned}
+ \hat{\mathbf{p}}_{i j}^i&=\hat{\mathbf{R}}_i^{w^{-1}}\left(\hat{\mathbf{p}}_j^w-\hat{\mathbf{p}}_i^w\right) \\
+\hat{\psi}_{i j}&=\hat{\psi}_j-\hat{\psi}_i
+\end{aligned}
+\end{equation}
+
+
+The whole graph of sequential edges and loop closure edges
+are optimized by minimizing the following cost function:
+
+\begin{equation}
+\min_{\mathbf{p}, \psi} \sum_{(i, j) \in \mathcal{S}}\left\|\mathbf{r}_{i, j}\right\|^2
+\end{equation}
+
+PGO produces a more smooth corrected pose, which is fed into the planner to control the UAV's navigation tasks. This process will be explained in detail in the experimental section.
+
+
+
+\section{Experiments}
+\subsection{Dataset}
+The primary goal of our algorithm is to eliminate the accumulated localization drift during long-distance navigation, so we evaluated the proposed system on a self-collected dataset, specifically from an underground environment.  The data used for mapping and evaluating localization accuracy includes point clouds from Livox Mid360, Livox IMU, MAVROS IMU, four-channel pinhole cameras(FOV $\approx$ 90) and a RealSense camera, as shown in \ref{fig:drones}. For navigation, only the RealSense stereo camera and MAVROS IMU data are used. We construct t heprior 3D map leveraging a modified FAST-LIO2. It should be noted that all images are 640x480 in resolution and are processed as grayscale. To evaluate the performance of the proposed method, our dataset was annotated with ground truth poses that is obtained through map-based LiDAR localization within the pre-constructed pointcloud map. Average absolute translation error (ATE) is used as the evaluation metric for quantitative experiments.
+
+\begin{figure}[t]
+	\centering
+	\subfigure[Drone1]{
+		\includegraphics[width=.45\linewidth]{figures/dld.png} \label{dld}
+	}
+	\subfigure[Drone2]{
+		\includegraphics[width=.45\linewidth]{figures/nx.jpeg} \label{nx}
+	}
+	\caption{(a) shows the vehicle we used for crowd-sourced data collection.
+		(b) showns the sensor setup we used for experiments. (The vehicle contains more sensors than we used.)}
+	\label{fig:drones}
+\end {figure}
+
+
+\subsection{Long-Term Localization in challenged environments}
+
+\subsubsection{Evaluation on self-collected dataset}
+In this section, we evaluate the localization performance on four different scenes in our Underground dataset collected by Drone 1. We use the reference sequence to construct LiDAR map, other sequences are used for localization. LiDAR trajectories in the global map generated serve as prior and ground truth for mapping and localization, respectively.
+
+To demonstrate the effectiveness of our system, we compared it with other methods: VINS-Fusion without loop closure, VINS-Fusion with loop closure and map. For a fair compare, we add lio pose into visual mapping of VINS-Fusion.
+
+The experiment results are presented in Table I. The results show that our method achieved the highest recall, precision, and localization accuracy. Furthermore, the proposed hierarchical and lightweight localization method maintains high accuracy while being computationally efficient. This indicates that our system is well-suited for automatic navigation tasks, which demand high localization accuracy with limited computational resources.
+
+\begin{table}[t]
+	\setlength\tabcolsep{4.5pt}
+	\centering
+	\caption{The Relocalization Results of Different Methods On Our Datasets}
+    \label{tab:method_comparison_experiment}
+	\setlength{\tabcolsep}{1mm}
+	\begin{tabular}{lccccc}
+		\toprule
+		\quad & Recall $\uparrow$ & Precision $\uparrow$ & RMSE[m] $\downarrow$ & \begin{tabular}[c]{@{}c@{}}ATE{[}m{]}\end{tabular} $\downarrow$ \\
+		% 
+		\midrule
+		%
+	VF \cite{qin2019aVINSFUSION} & - & - & 3.6432 &  8.2833 \\
+  % 
+		VF with Map & 0.56  &  0.599 & 1.496 & 2.79 \\
+		% 
+		Ours & \textbf{0.7985} & \textbf{0.8180} & \textbf{0.6509} & \textbf{1.5347}  \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+\subsubsection{Evaluation on Orientation Change}
+
+Theoretically, proposed algorithm is able to re-localization at almost any position and orientation within the map as four 90-degree-gapped keyframes were recored. To test the performance of the UAV's localization when its orientation differs from the mapping orientation, we maintained a consistent or varying angle deviation during flight. We conducted comparisons on three datasets, with orientations of 90 degrees, 180 degrees, and varying between 0-360 degrees relative to the forward direction of mapping trajectory. The experiments demonstrate that our algorithm can maintain accurate localization even with changes in orientation.
+
+\begin{table}[t]
+	\setlength\tabcolsep{4.5pt}
+	\centering
+	\caption{{Metric comparison for different NeRF methods}
+		\label{tab:method_comparison_experiment}}
+	\setlength{\tabcolsep}{1mm}
+	\begin{tabular}{lccccc}
+		\toprule
+		\quad & Recall $\uparrow$ & Precision $\uparrow$ & RMSE[m] $\downarrow$ & \begin{tabular}[c]{@{}c@{}}Max Error{[}m{]} \end{tabular} $\downarrow$  \\
+		% 
+		\midrule
+		%
+		90\cite{barron2021mip} & 0.567 & 0.746x & 1.124 &  \underline{3.214}  \\
+		% 
+		180\cite{instant-ngp} & 0.768  &  0.543 & 0.836 & 1.472 \\
+		%
+		0-360 change & 0.644 & 0.758 & 1.180 & \textbf{2.998}  \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+\subsubsection{Evaluation on Orientation Change}
+The localization runtime performance of the proposed system is measured in two different platforms: an Intel Core i9-12900KF desktop with GeForce RTX 3080Ti and a Nvidia Jetson Orin NX. (16G). The feature extractors are speeded up using the Torch-TensorRT engine, and we use half-precision for Orin platform. The time cost result is presented in Table.IV, in which the localization step is the sum of local feature extraction and tracking steps. The localization takes only 72 ms on the Orin platform, which is sufficient for real-time localization of a 10 Hz image input and is suitable for onboard applications.
+
+\begin{table}[htbp]
+	\setlength\tabcolsep{4.5pt}
+	\centering
+	\caption{{Localization Time Cost (ms)}
+		\label{tab:method_comparison_experiment}}
+	\setlength{\tabcolsep}{1mm}
+	\begin{tabular}{lcc}
+		\toprule
+		Steps& Desktop & Orin NX  \\
+		% 
+		\midrule
+		%
+		90& 0.567 & 0.746x \\
+		% 
+		180 & 0.768  &  0.543 \\
+		%
+		0-360 change & 0.644 & 0.758  \\
+            \midrule
+%
+		90& 0.567 & 0.746x \\
+		% 
+		180 & 0.768  &  0.543 \\
+		%
+		0-360 change & 0.644 & 0.758  \\
+  %
+		0-360 change & 0.644 & 0.758  \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+
+
+\subsection{Autonomous Navigation Deployment}
+The two evaluations above demonstrate that our algorithm is capable of reliable relocalization in underground parking lots. Consequently, we adapted the proposed system for an autonomous UAV to perform navigation tasks in such environments. In this task, the Drone2 UAV utilizes the map built by Drone1. Users can select waypoints within the LiDAR map, and the UAV will follow the planned path generated by the planner, continuing its flight until the battery is depleted. The specific results of this experiment are presented in the attached media.
+
+\section{Conclusion}
+In this paper, we proposed a crowd-sourced framework that trained the NeRF model from the data captured by multiple production vehicles.
+This approach solved a key problem of large-scale reconstruction, that was where the data came from.
+We incorporated multiple improvements, such as ground surface supervision, occlusion completion, and sequence appearance embedding, to enhance the performance.
+Finally, the 3D first-view navigation based on the NeRF model was applied to real-world scenarios.
+
+Although the result from the proposed CS-NeRF framework seems great and promising, there are still several limitations and future works that are worth discussing:
+% Extensive experiments have verified that the system can run in real-time on the robot and provide absolute positioning in the map coordinate system for navigation.
+
+\clearpage
+
+\bibliography{reference.bib}
+
+\end{document}

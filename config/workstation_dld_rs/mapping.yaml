@@ -1,0 +1,73 @@
+%YAML:1.0
+
+superpoint:
+  max_keypoints: 600
+  keypoint_threshold: 0.01 # 0.004
+  remove_borders: 4 
+  dla_core: 1
+  onnx_file: "/home/heron/SJTU/Codes/VIO/cross_modal_ws/src/global_loop/support_files/model/superpoint_v1_sim_int32.onnx"
+  engine_file: "/home/heron/SJTU/Codes/VIO/cross_modal_ws/src/global_loop/support_files/model/superpoint_v1_sim_int32.engine"
+
+brief:
+  max_keypoints: 600
+  keypoint_threshold: 5
+  remove_borders: 4
+  pattern_file: "/home/heron/SJTU/Codes/VIO/cross_modal_ws/src/global_loop/support_files/brief_pattern.yml"
+
+#common parameters
+#support: 1 imu 1 cam; 1 imu 2 cam: 2 cam; 
+imu: 0         
+num_of_cam: 1
+
+imu_topic: "/mavros/imu/data"
+image0_topic: "/camera/infra1/image_rect_raw"
+
+# output_path: ""
+mapping_time_log_path: "/home/heron/Desktop/loop_output/dld_rs_ref13_mappT.txt"
+
+cam0_calib: "rs_left.yaml"
+
+image_width: 640
+image_height: 480
+
+#feature traker paprameters
+max_cnt: 500           # max feature number in feature tracking
+min_dist: 10            # min distance between two features 
+min_dist_lidarpt: 10 
+freq: 10                # frequence (Hz) of publish tracking result. At least 10Hz for good estimation. If set 0, the frequence will be same as raw image 
+F_threshold: 1.0        # ransac threshold (pixel)
+show_track: 1           # publish tracking image as topic
+flow_back: 1            # perform forward and backward optical flow to improve feature tracking accuracy
+
+
+#loop closure parameters
+mapping_mode: 0 #0 lidar only;  1 vision only ; 2 lidar+vision
+detector: 1 #0:superpoint, 1 brief
+# matcher: 1 #0: superglue , 1:brute-force
+build_keyframe: 1               # build keyframe for loop closure
+load_previous_pose_graph: 0        # load and reuse previous pose graph; load from 'pose_graph_save_path'
+pose_graph_save_path: "/home/heron/Desktop/loop_output/keyframes_dld_omni_ref13_cvbrief/" # save and load path
+debug_image: 1                   # save image in pose graph for visualization prupose; you can close this function by setting 0 
+mapp_dis_factor: 600
+mapp_rot_factor: 20
+#skip_dist: 1.0
+
+#! test on 2024.4.5
+
+body_T_cam0: !!opencv-matrix
+   rows: 4
+   cols: 4
+   dt: d
+   data: [ 0.01061897 , 0.00002221 , 0.99994362,  0.09633531,
+          -0.99971722 , 0.02127848 , 0.01061609 , 0.03723685,
+          -0.02127705 ,-0.99977359 , 0.00024816 , 0.04185493,
+           0.        ,  0.        ,  0.         , 1.        ]
+
+body_T_cam1: !!opencv-matrix
+   rows: 4
+   cols: 4
+   dt: d
+   data: [ 0.01166465  ,0.00074722 , 0.99993169 , 0.09695252,
+          -0.99970424 , 0.02134974 , 0.01164604 ,-0.01275847,
+          -0.02133958 ,-0.99977179  ,0.00099604,  0.04069304,
+          0.         , 0.      ,    0.     ,     1.        ]

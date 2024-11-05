@@ -1,0 +1,53 @@
+%YAML:1.0
+
+#common parameters
+#support: 1 imu 1 cam; 1 imu 2 cam: 2 cam; 
+imu: 1         
+num_of_cam: 1
+
+imu_topic: "/mavros/imu/data"
+# image0_topic: "/usb_cam_2/image_raw"
+image0_topic: "/camera/infra1/image_rect_raw"
+
+# output_path: ""
+loop_output_path: "/home/nv/Desktop/loop_output/v0_dld_rs_ref7_loop.txt"
+relo_time_log_path: "/home/nv/Desktop/loop_output/v0_dld_rs_ref7_reloT.txt"
+
+# cam0_calib: "front.yaml"
+cam0_calib: "rs.yaml"
+image_width: 640
+image_height: 480
+
+#loop closure parameters
+build_keyframe: 0               # build keyframe for loop closure
+load_previous_pose_graph: 1        # load and reuse previous pose graph; load from 'pose_graph_save_path'
+use_pg_optimize: 1
+use_traj_smooth: 1
+skip_dist: 0.5
+pose_graph_save_path: "/home/nv/Desktop/loop_output/keyframes_dld_rs_ref7/" # save and load path
+debug_image: 0                   # save image in pose graph for visualization prupose; you can close this function by setting 0 
+max_cnt: 100            # max feature number in feature tracking
+
+
+#! test on 2024.4.5
+
+body_T_cam0: !!opencv-matrix
+   rows: 4
+   cols: 4
+   dt: d
+   data: [ -7.9409474578031169e-03, -2.0129909406697899e-02,
+       9.9976537707136659e-01, 9.9000000000000005e-02,
+       -9.9996700000000005e-01, 1.8944999999999999e-03,
+       -7.9041900000000002e-03, 2.5000000000000008e-02,
+       -1.7357150206763865e-03, -9.9979521923657899e-01,
+       -2.0144689300393537e-02, 3.4000000000000002e-02, 0., 0., 0., 1. ]
+body_T_cam1: !!opencv-matrix
+   rows: 4
+   cols: 4
+   dt: d
+   data: [ -7.9409474578031169e-03, -2.0129909406697899e-02,
+       9.9976537707136659e-01, 9.9000000000000005e-02,
+       -9.9996700000000005e-01, 1.8944999999999999e-03,
+       -7.9041900000000002e-03, -2.5000000000000008e-02,
+       -1.7357150206763865e-03, -9.9979521923657899e-01,
+       -2.0144689300393537e-02, 3.4000000000000002e-02, 0., 0., 0., 1. ]

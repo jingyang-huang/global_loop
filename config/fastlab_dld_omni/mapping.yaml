@@ -1,0 +1,97 @@
+%YAML:1.0
+
+superpoint:
+  max_keypoints: 600
+  keypoint_threshold: 0.01 # 0.004
+  remove_borders: 4 
+  dla_core: 1
+  onnx_file: "/home/nv/SJTU_cm_ws/src/global_loop/support_files/model/superpoint_v1_sim_int32.onnx"
+  engine_file: "/home/nv/SJTU_cm_ws/src/global_loop/support_files/model/superpoint_v1_sim_int32_nx.engine"
+
+brief:
+  max_keypoints: 600
+  keypoint_threshold: 10
+  remove_borders: 4
+  pattern_file: "/home/nv/SJTU_cm_ws/src/global_loop/support_files/brief_pattern.yml"
+
+#common parameters   
+num_of_cam: 2
+
+image0_topic: "/usb_cam_1/image_raw" # front   back left right
+image1_topic: "/usb_cam_3/image_raw"
+image2_topic: "/usb_cam_2/image_raw"
+image3_topic: "/usb_cam_0/image_raw"
+# output_path: ""
+mapping_time_log_path: "/home/nv/Desktop/loop_output/dld_omni_ref16_mappT.txt"
+
+cam0_calib: "front.yaml"
+cam1_calib: "back.yaml"
+cam2_calib: "left.yaml"
+cam3_calib: "right.yaml"
+image_width: 640
+image_height: 480
+
+
+#feature traker paprameters
+max_cnt: 500           # max feature number in feature tracking
+min_dist: 10            # min distance between two features 
+min_dist_lidarpt: 20 
+freq: 10                # frequence (Hz) of publish tracking result. At least 10Hz for good estimation. If set 0, the frequence will be same as raw image 
+F_threshold: 1.0        # ransac threshold (pixel)
+show_track: 1           # publish tracking image as topic
+flow_back: 1            # perform forward and backward optical flow to improve feature tracking accuracy
+
+
+#loop closure parameters
+mapping_mode: 0 #0 lidar only;  1 vision only ; 2 lidar+vision
+detector: 0 #0:superpoint, 1 brief
+matcher: 0 #0: superglue , 1:brute-force
+build_keyframe: 1               # build keyframe for loop closure
+load_previous_pose_graph: 0        # load and reuse previous pose graph; load from 'pose_graph_save_path'
+pose_graph_save_path: "/home/nv/Desktop/loop_output/keyframes_dld_omni_ref16/" # save and load path
+debug_image: 1                   # save image in pose graph for visualization prupose; you can close this function by setting 0 
+fast_projection: 0
+mapp_dis_factor: 600
+mapp_rot_factor: 20
+#skip_dist: 1.0
+
+
+body_T_cam0: !!opencv-matrix #front
+   rows: 4
+   cols: 4
+   dt: d 
+   data: [ 0., 0., 1., 8.0000000000000000e-02,
+          -1., 0., 0.,0.0,
+          0., -1., 0., -1.5000000000000000e-02,
+          0.,0., 0., 1. ]
+
+body_T_cam1: !!opencv-matrix #back
+   rows: 4
+   cols: 4
+   dt: d
+   data: [ 0., 0., -1., -8.0000000000000000e-02,
+            1., 0., 0.,0.,
+            0., -1., 0., -2.2000000000000000e-02,
+            0., 0., 0., 1. ]
+
+body_T_cam2: !!opencv-matrix #left
+   rows: 4
+   cols: 4
+   dt: d
+   data: [ 1., 0., 0., 0.00,
+            0., 0., 1., 5.4000000000000000e-02,
+            0., -1., 0., -1.7000000000000000e-02,
+            0., 0., 0., 1. ]
+
+body_T_cam3: !!opencv-matrix #right
+   rows: 4
+   cols: 4
+   dt: d
+   data: [ -1., 0., 0., 0.00,
+            0., 0., -1.,-5.4000000000000000e-02,
+            0., -1., 0., -1.7000000000000000e-02,
+            0., 0., 0., 1. ]
+  
+
+
+
