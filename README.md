@@ -1,5 +1,6 @@
 # Building Hybrid Omnidirectional Visual-Lidar Maps for Visual-Only Localization
-This is the official repo for paper *Building Hybrid Omnidirectional Visual-Lidar Maps for Visual-Only Localization*. The source code for loop fusion is coming soon!
+
+This is the official repo for paper *Building Hybrid Omnidirectional Visual-Lidar Maps for Visual-Only Localization*, which is accepted by **IROS2025**. The source code for loop fusion is coming soon!
 
 global loop could associate Lidar scans and camera pixels to generate hybrid visual-lidar map, which could later be utilized to localization in the same scene.
 
