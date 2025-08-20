@@ -1,0 +1,5 @@
+<launch>
+    <node name="vins_estimator" pkg="vins"  type="vins_node" output="screen" args="$(find loop_fusion)/../config/workstation_hkucbd_mono/fusion_imu_config.yaml"/>
+
+	<node name="rvizvisualisation" pkg="rviz" type="rviz" output="log" args="-d $(find loop_fusion)/launch/reloc.rviz" />
+</launch> 

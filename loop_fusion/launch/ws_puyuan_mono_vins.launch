@@ -1,0 +1,17 @@
+<launch>
+	<arg name="config_path" default="$(find loop_fusion)/../config/workstation_puyuan_mono/mono_imu_config.yaml" />
+
+    <arg name="vins_path" default = "$(find loop_fusion)/../config/" />
+    
+    <node name="feature_tracker" pkg="feature_tracker" type="feature_tracker" output="log">
+        <param name="config_file" type="string" value="$(arg config_path)" />
+        <param name="vins_folder" type="string" value="$(arg vins_path)" />
+    </node>
+
+    <node name="vins_estimator" pkg="vins_estimator" type="vins_estimator" output="screen">
+       <param name="config_file" type="string" value="$(arg config_path)" />
+       <param name="vins_folder" type="string" value="$(arg vins_path)" />
+    </node>
+
+	<node name="rvizvisualisation" pkg="rviz" type="rviz" output="log" args="-d $(find loop_fusion)/launch/reloc.rviz" />
+</launch> 
